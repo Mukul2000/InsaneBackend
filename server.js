@@ -47,12 +47,14 @@ io.on('connection', socket => {
       socket.to(gameRoom).emit('game_status', { result: false });
   });
 
-  // send disconnect notification to other sockets in the room.
-  socket.on('disconnect', () => {
+  // if a player disconnects then send disconnect notification to the other player in the room.
+  socket.on('disconnecting', () => {
+    console.log(socket.id, "disconnecting");
     const socketRooms = Array.from(socket.rooms.values()).filter(r => r !== socket.id); // remove socket id from rooms
     const gameRoom = socketRooms && socketRooms[0];
     socket.to(gameRoom).emit('player_left');
   });
+
 });
 
 server.listen(process.env.PORT || 8000, () => {
